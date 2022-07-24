@@ -45,4 +45,15 @@ class StringTests: XCTestCase {
             .plainText(")")
         ])
     }
+    
+    func testFormatDoubleQuoteString() {
+        let components = highlighter.highlight("mlmodel.save(f\"AnimeGANv2_{SIZE}.mlmodel\")")
+        XCTAssertEqual(components, [
+            .plainText("mlmodel.save(f"),
+            .token("\"AnimeGANv2_", .string),
+            .plainText("{SIZE}"),
+            .token(".mlmodel\"", .string),
+            .plainText(")")
+        ])
+    }
 }

@@ -8,8 +8,6 @@ public struct PythonGrammar: Grammar {
     public init() {
         var delimiters = CharacterSet.alphanumerics.inverted
         delimiters.remove("_")
-        delimiters.remove("\"")
-        delimiters.remove("'")
         delimiters.remove("@")
         delimiters.remove("%")
         self.delimiters = delimiters
@@ -20,6 +18,20 @@ public struct PythonGrammar: Grammar {
             KeywordRule(),
             BuiltinRule()
         ]
+    }
+    
+    public func isDelimiter(_ delimiterA: Character,
+                            mergableWith delimiterB: Character) -> Bool {
+        switch (delimiterA, delimiterB) {
+        case ("(", _), (_, ")"):
+            return false
+        case ("\"", _), ("'", _), (_, "\""), (_, "'"):
+            return false
+        case ("{", _), (_, "{"), (_, "}"), ("}", _):
+            return false
+        default:
+            return true
+        }
     }
     
     static let keywords: Set<String> = [
@@ -111,8 +123,11 @@ public struct PythonGrammar: Grammar {
                 return true
             }
             
-            return segment.isWithinStringLiteral(withStart: "\"", end: "\"") ||
-            segment.isWithinStringLiteral(withStart: "'", end: "'")
+            let withinString =  segment.isWithinStringLiteral(withStart: "\"", end: "\"") ||
+                segment.isWithinStringLiteral(withStart: "'", end: "'")
+            let withinBraces = segment.isWithinStringLiteral(withStart: "{", end: "}")
+            
+            return withinString && !withinBraces
         }
     }
     
