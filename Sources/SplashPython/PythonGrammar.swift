@@ -17,7 +17,8 @@ public struct PythonGrammar: Grammar {
         syntaxRules = [
             CommentRule(),
             StringRule(),
-            KeywordRule()
+            KeywordRule(),
+            BuiltinRule()
         ]
     }
     
@@ -31,6 +32,53 @@ public struct PythonGrammar: Grammar {
         "or", "pass", "raise", "return",
         "True", "try", "while", "with",
         "yield"
+    ]
+    
+    static let builtins: Set<String> = [
+        "abs", "aiter", "all", "any",
+        "anext", "ascii",
+        
+        "bin", "bool", "breakpoint", "bytearray",
+        "bytes",
+        
+        "callable", "chr", "classmethod", "compile",
+        "complex",
+        
+        "delattr", "dict", "dir", "divmod",
+        
+        "enumerate", "eval", "exec",
+        
+        "filter", "float", "format", "frozenset",
+        
+        "getattr", "globals",
+        
+        "hasattr", "hash", "help", "hex",
+        
+        "id", "input", "int", "isinstance",
+        "issubclass", "iter",
+        
+        "len", "list", "locals",
+        
+        "map", "max", "memoryview", "min",
+        
+        "next",
+        
+        "object", "oct", "open", "ord",
+        
+        "pow", "print", "property",
+        
+        "range", "repr", "reversed", "round",
+        
+        "set", "setattr", "slice", "sorted",
+        "staticmethod", "str", "sum", "super",
+        
+        "tuple", "type",
+        
+        "vars",
+        
+        "zip",
+        
+        "__import__"
     ]
     
     struct CommentRule: SyntaxRule {
@@ -64,15 +112,23 @@ public struct PythonGrammar: Grammar {
             }
             
             return segment.isWithinStringLiteral(withStart: "\"", end: "\"") ||
-                segment.isWithinStringLiteral(withStart: "'", end: "'")
+            segment.isWithinStringLiteral(withStart: "'", end: "'")
         }
     }
     
     struct KeywordRule: SyntaxRule {
         var tokenType: TokenType { return .keyword }
-
+        
         func matches(_ segment: Segment) -> Bool {
             return keywords.contains(segment.tokens.current)
+        }
+    }
+    
+    struct BuiltinRule: SyntaxRule {
+        var tokenType: TokenType { return .custom("builtin") }
+
+        func matches(_ segment: Segment) -> Bool {
+            return builtins.contains(segment.tokens.current) && (segment.tokens.next?.hasPrefix("(") ?? true)
         }
     }
 }

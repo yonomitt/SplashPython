@@ -17,7 +17,8 @@ class StringTests: XCTestCase {
     func testSingleLineDoubleQuoteString() {
         let components = highlighter.highlight("print(\"This is a string\")")
         XCTAssertEqual(components, [
-            .plainText("print("),
+            .token("print", .custom("builtin")),
+            .plainText("("),
             .token("\"This", .string),
             .whitespace(" "),
             .token("is", .string),
@@ -32,7 +33,8 @@ class StringTests: XCTestCase {
     func testSingleLineSingleQuoteString() {
         let components = highlighter.highlight("print('This is a string')")
         XCTAssertEqual(components, [
-            .plainText("print("),
+            .token("print", .custom("builtin")),
+            .plainText("("),
             .token("'This", .string),
             .whitespace(" "),
             .token("is", .string),

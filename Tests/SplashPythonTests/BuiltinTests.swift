@@ -2,7 +2,7 @@ import XCTest
 import Splash
 @testable import SplashPython
 
-class KeywordTests: XCTestCase {
+class BuiltinTests: XCTestCase {
     private(set) var highlighter: SyntaxHighlighter<OutputFormatMock>!
     private(set) var builder: OutputBuilderMock!
     
@@ -14,28 +14,31 @@ class KeywordTests: XCTestCase {
         highlighter = SyntaxHighlighter(format: format, grammar: PythonGrammar())
     }
     
-    func testBooleanKeywords() {
-        let components = highlighter.highlight("print('Hi ' + str(True or False and 0)")
+    func testRealBuiltin() {
+        let components = highlighter.highlight("x = input('>>> ')")
         XCTAssertEqual(components, [
-            .token("print", .custom("builtin")),
+            .plainText("x"),
+            .whitespace(" "),
+            .plainText("="),
+            .whitespace(" "),
+            .token("input", .custom("builtin")),
             .plainText("("),
-            .token("'Hi", .string),
+            .token("'>>>", .string),
             .whitespace(" "),
             .token("'", .string),
+            .plainText(")")
+        ])
+    }
+    
+    func testFakeBuiltin() {
+        let components = highlighter.highlight("input = len(x)")
+        XCTAssertEqual(components, [
+            .plainText("input"),
             .whitespace(" "),
-            .plainText("+"),
+            .plainText("="),
             .whitespace(" "),
-            .token("str", .custom("builtin")),
-            .plainText("("),
-            .token("True", .keyword),
-            .whitespace(" "),
-            .token("or", .keyword),
-            .whitespace(" "),
-            .token("False", .keyword),
-            .whitespace(" "),
-            .token("and", .keyword),
-            .whitespace(" "),
-            .plainText("0)")
+            .token("len", .custom("builtin")),
+            .plainText("(x)")
         ])
     }
 }
