@@ -16,9 +16,22 @@ public struct PythonGrammar: Grammar {
         
         syntaxRules = [
             CommentRule(),
-            StringRule()
+            StringRule(),
+            KeywordRule()
         ]
     }
+    
+    static let keywords: Set<String> = [
+        "and", "as", "assert", "break",
+        "class", "continue", "def", "del",
+        "elif", "else", "except", "False",
+        "finally", "for", "from", "global",
+        "if", "import", "in", "is",
+        "lambda", "None", "nonlocal", "not",
+        "or", "pass", "raise", "return",
+        "True", "try", "while", "with",
+        "yield"
+    ]
     
     struct CommentRule: SyntaxRule {
         var tokenType: TokenType { return .comment }
@@ -52,6 +65,14 @@ public struct PythonGrammar: Grammar {
             
             return segment.isWithinStringLiteral(withStart: "\"", end: "\"") ||
                 segment.isWithinStringLiteral(withStart: "'", end: "'")
+        }
+    }
+    
+    struct KeywordRule: SyntaxRule {
+        var tokenType: TokenType { return .keyword }
+
+        func matches(_ segment: Segment) -> Bool {
+            return keywords.contains(segment.tokens.current)
         }
     }
 }
