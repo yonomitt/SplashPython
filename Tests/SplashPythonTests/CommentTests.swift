@@ -32,7 +32,7 @@ class CommentTests: XCTestCase {
             .whitespace(" "),
             .plainText("="),
             .whitespace(" "),
-            .plainText("42"),
+            .token("42", .number),
             .whitespace(" "),
             .token("#", .comment),
             .whitespace(" "),

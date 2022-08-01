@@ -16,7 +16,8 @@ public struct PythonGrammar: Grammar {
             CommentRule(),
             StringRule(),
             KeywordRule(),
-            BuiltinRule()
+            BuiltinRule(),
+            NumberRule()
         ]
     }
     
@@ -144,6 +145,27 @@ public struct PythonGrammar: Grammar {
 
         func matches(_ segment: Segment) -> Bool {
             return builtins.contains(segment.tokens.current) && (segment.tokens.next?.hasPrefix("(") ?? true)
+        }
+    }
+    
+    struct NumberRule: SyntaxRule {
+        var tokenType: TokenType { return .number }
+
+        func matches(_ segment: Segment) -> Bool {
+            if segment.tokens.current.isNumber {
+                return true
+            }
+
+            // Double and floating point values that contain a "."
+            guard segment.tokens.current == "." else {
+                return false
+            }
+
+            guard let previous = segment.tokens.previous else {
+                    return false
+            }
+
+            return previous.isNumber
         }
     }
 }

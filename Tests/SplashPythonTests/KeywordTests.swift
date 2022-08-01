@@ -35,7 +35,8 @@ class KeywordTests: XCTestCase {
             .whitespace(" "),
             .token("and", .keyword),
             .whitespace(" "),
-            .plainText("0)")
+            .token("0", .number),
+            .plainText(")")
         ])
     }
 }
