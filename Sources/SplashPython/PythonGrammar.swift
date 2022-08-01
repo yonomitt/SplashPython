@@ -17,7 +17,8 @@ public struct PythonGrammar: Grammar {
             StringRule(),
             KeywordRule(),
             BuiltinRule(),
-            NumberRule()
+            NumberRule(),
+            ConstantRule()
         ]
     }
     
@@ -166,6 +167,20 @@ public struct PythonGrammar: Grammar {
             }
 
             return previous.isNumber
+        }
+    }
+    
+    struct ConstantRule: SyntaxRule {
+        var tokenType: TokenType { return .custom("constant") }
+        
+        func matches(_ segment: Segment) -> Bool {
+            var allowedChars = CharacterSet.uppercaseLetters
+            allowedChars = allowedChars.union(CharacterSet.decimalDigits)
+            allowedChars.insert("_")
+            
+            let current = CharacterSet(charactersIn: segment.tokens.current)
+            
+            return allowedChars.isSuperset(of: current)
         }
     }
 }
