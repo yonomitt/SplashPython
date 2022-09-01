@@ -18,7 +18,8 @@ public struct PythonGrammar: Grammar {
             KeywordRule(),
             BuiltinRule(),
             NumberRule(),
-            ConstantRule()
+            ConstantRule(),
+            CallRule()
         ]
     }
     
@@ -181,6 +182,18 @@ public struct PythonGrammar: Grammar {
             let current = CharacterSet(charactersIn: segment.tokens.current)
             
             return allowedChars.isSuperset(of: current)
+        }
+    }
+    
+    struct CallRule: SyntaxRule {
+        var tokenType: TokenType { return .call }
+        
+        func matches(_ segment: Segment) -> Bool {
+            if let previousToken = segment.tokens.previous,
+                previousToken == "class" {
+                return false
+            }
+            return segment.tokens.next?.starts(with: "(") ?? false
         }
     }
 }
