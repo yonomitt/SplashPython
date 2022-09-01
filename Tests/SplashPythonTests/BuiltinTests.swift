@@ -41,4 +41,20 @@ class BuiltinTests: XCTestCase {
             .plainText("(x)")
         ])
     }
+    
+    func testMultipleBuiltIns() {
+        let components = highlighter.highlight("list(zip(list1, list2))[2:7]")
+        XCTAssertEqual(components, [
+            .token("list", .custom("builtin")),
+            .plainText("("),
+            .token("zip", .custom("builtin")),
+            .plainText("(list1,"),
+            .whitespace(" "),
+            .plainText("list2))["),
+            .token("2", .number),
+            .plainText(":"),
+            .token("7", .number),
+            .plainText("]")
+        ])
+    }
 }
