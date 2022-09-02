@@ -42,6 +42,15 @@ class BuiltinTests: XCTestCase {
         ])
     }
     
+    func testFakeBuiltin2() {
+        let components = highlighter.highlight("model.eval()")
+        XCTAssertEqual(components, [
+            .plainText("model."),
+            .token("eval", .call),
+            .plainText("()")
+        ])
+    }
+    
     func testMultipleBuiltIns() {
         let components = highlighter.highlight("list(zip(list1, list2))[2:7]")
         XCTAssertEqual(components, [

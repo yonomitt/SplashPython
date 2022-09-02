@@ -147,7 +147,8 @@ public struct PythonGrammar: Grammar {
         var tokenType: TokenType { return .custom("builtin") }
 
         func matches(_ segment: Segment) -> Bool {
-            return builtins.contains(segment.tokens.current) && (segment.tokens.next?.hasPrefix("(") ?? true)
+            return builtins.contains(segment.tokens.current) && (segment.tokens.next?.hasPrefix("(") ?? true) &&
+                !(segment.tokens.previous?.hasSuffix(".") ?? false)
         }
     }
     
