@@ -213,7 +213,9 @@ public struct PythonGrammar: Grammar {
         var tokenType: TokenType { return .custom("argument") }
         
         func matches(_ segment: Segment) -> Bool {
-            let withinParens = segment.isWithinStringLiteral(withStart: "(", end: ")")
+            let countOpen = segment.tokens.count(of: "(")
+            let countClose = segment.tokens.count(of: ")")
+            let withinParens = countOpen == (countClose + 1)
             let precedesEqual = segment.tokens.next?.starts(with: "=") ?? false
             return withinParens && precedesEqual
         }

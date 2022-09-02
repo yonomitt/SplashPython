@@ -56,4 +56,23 @@ class ArgumentTests: XCTestCase {
             .plainText("):")
         ])
     }
+    
+    func testArgumentsOnMultipleLines() {
+        let components = highlighter.highlight("def main(args=None,\n count=2):")
+        XCTAssertEqual(components, [
+            .token("def", .keyword),
+            .whitespace(" "),
+            .token("main", .call),
+            .plainText("("),
+            .token("args", .custom("argument")),
+            .plainText("="),
+            .token("None", .keyword),
+            .plainText(","),
+            .whitespace("\n "),
+            .token("count", .custom("argument")),
+            .plainText("="),
+            .token("2", .number),
+            .plainText("):")
+        ])
+    }
 }
