@@ -20,7 +20,8 @@ public struct PythonGrammar: Grammar {
             NumberRule(),
             ConstantRule(),
             TypeRule(),
-            CallRule()
+            CallRule(),
+            ArgumentRule()
         ]
     }
     
@@ -205,6 +206,16 @@ public struct PythonGrammar: Grammar {
                 return false
             }
             return segment.tokens.next?.starts(with: "(") ?? false
+        }
+    }
+    
+    struct ArgumentRule: SyntaxRule {
+        var tokenType: TokenType { return .custom("argument") }
+        
+        func matches(_ segment: Segment) -> Bool {
+            let withinParens = segment.isWithinStringLiteral(withStart: "(", end: ")")
+            let precedesEqual = segment.tokens.next?.starts(with: "=") ?? false
+            return withinParens && precedesEqual
         }
     }
 }

@@ -2,7 +2,7 @@ import XCTest
 import Splash
 @testable import SplashPython
 
-class TypeTests: XCTestCase {
+class ArgumentTests: XCTestCase {
     private(set) var highlighter: SyntaxHighlighter<OutputFormatMock>!
     private(set) var builder: OutputBuilderMock!
     
@@ -14,10 +14,10 @@ class TypeTests: XCTestCase {
         highlighter = SyntaxHighlighter(format: format, grammar: PythonGrammar())
     }
     
-    func testTypeCallFromModule() {
-        let components = highlighter.highlight("tensor = ct.TensorType(name=\"input\", shape=dummy_in.shape)")
+    func testArgumentsNoSpace() {
+        let components = highlighter.highlight("input = ct.TensorType(name=\"input\", shape=dummy_in.shape)")
         XCTAssertEqual(components, [
-            .plainText("tensor"),
+            .plainText("input"),
             .whitespace(" "),
             .plainText("="),
             .whitespace(" "),
@@ -34,14 +34,25 @@ class TypeTests: XCTestCase {
         ])
     }
     
-    func testTypeCallInClassDefinition() {
-        let components = highlighter.highlight("class StableDiffusionWrapper(mlflow.pyfunc.PythonModel):")
+    func testArgumentsWithSpaces() {
+        let components = highlighter.highlight("def main(args = None, count = 2):")
         XCTAssertEqual(components, [
-            .token("class", .keyword),
+            .token("def", .keyword),
             .whitespace(" "),
-            .token("StableDiffusionWrapper", .type),
-            .plainText("(mlflow.pyfunc."),
-            .token("PythonModel", .type),
+            .token("main", .call),
+            .plainText("("),
+            .token("args", .custom("argument")),
+            .whitespace(" "),
+            .plainText("="),
+            .whitespace(" "),
+            .token("None", .keyword),
+            .plainText(","),
+            .whitespace(" "),
+            .token("count", .custom("argument")),
+            .whitespace(" "),
+            .plainText("="),
+            .whitespace(" "),
+            .token("2", .number),
             .plainText("):")
         ])
     }
