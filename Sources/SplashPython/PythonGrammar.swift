@@ -19,6 +19,7 @@ public struct PythonGrammar: Grammar {
             BuiltinRule(),
             NumberRule(),
             ConstantRule(),
+            TypeRule(),
             CallRule()
         ]
     }
@@ -182,6 +183,15 @@ public struct PythonGrammar: Grammar {
             let current = CharacterSet(charactersIn: segment.tokens.current)
             
             return allowedChars.isSuperset(of: current)
+        }
+    }
+    
+    struct TypeRule: SyntaxRule {
+        var tokenType: TokenType { return .type }
+        
+        func matches(_ segment: Segment) -> Bool {
+            // FIXME: add support for builtin types? (int, float, bytes, etc...)
+            return segment.tokens.current.isCapitalized
         }
     }
     
