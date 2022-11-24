@@ -60,4 +60,86 @@ class StringTests: XCTestCase {
             .plainText(")")
         ])
     }
+
+    func testMultilineStringSingleQuote() {
+        let code = """
+        def main():
+            '''
+            This should all be a string
+        
+            this too
+            '''
+            pass
+        """
+        let components = highlighter.highlight(code)
+        XCTAssertEqual(components, [
+            .token("def", .keyword),
+            .whitespace(" "),
+            .token("main", .call),
+            .plainText("():"),
+            .whitespace("\n    "),
+            .token("'''", .string),
+            .whitespace("\n    "),
+            .token("This", .string),
+            .whitespace(" "),
+            .token("should", .string),
+            .whitespace(" "),
+            .token("all", .string),
+            .whitespace(" "),
+            .token("be", .string),
+            .whitespace(" "),
+            .token("a", .string),
+            .whitespace(" "),
+            .token("string", .string),
+            .whitespace("\n\n    "),
+            .token("this", .string),
+            .whitespace(" "),
+            .token("too", .string),
+            .whitespace("\n    "),
+            .token("'''", .string),
+            .whitespace("\n    "),
+            .token("pass", .keyword),
+        ])
+    }
+    
+    func testMultilineStringDoubleQuote() {
+        let code = """
+        def main():
+            \"\"\"
+            This should all be a string
+        
+            this too
+            \"\"\"
+            pass
+        """
+        let components = highlighter.highlight(code)
+        XCTAssertEqual(components, [
+            .token("def", .keyword),
+            .whitespace(" "),
+            .token("main", .call),
+            .plainText("():"),
+            .whitespace("\n    "),
+            .token("\"\"\"", .string),
+            .whitespace("\n    "),
+            .token("This", .string),
+            .whitespace(" "),
+            .token("should", .string),
+            .whitespace(" "),
+            .token("all", .string),
+            .whitespace(" "),
+            .token("be", .string),
+            .whitespace(" "),
+            .token("a", .string),
+            .whitespace(" "),
+            .token("string", .string),
+            .whitespace("\n\n    "),
+            .token("this", .string),
+            .whitespace(" "),
+            .token("too", .string),
+            .whitespace("\n    "),
+            .token("\"\"\"", .string),
+            .whitespace("\n    "),
+            .token("pass", .keyword),
+        ])
+    }
 }

@@ -15,6 +15,7 @@ public struct PythonGrammar: Grammar {
         syntaxRules = [
             CommentRule(),
             StringRule(),
+            MultilineString(),
             KeywordRule(),
             BuiltinRule(),
             NumberRule(),
@@ -30,6 +31,8 @@ public struct PythonGrammar: Grammar {
         switch (delimiterA, delimiterB) {
         case ("(", _), (_, ")"):
             return false
+        case ("\"", "\""), ("'", "'"):
+            return true
         case ("\"", _), ("'", _), (_, "\""), (_, "'"):
             return false
         case ("{", _), (_, "{"), (_, "}"), ("}", _):
@@ -109,7 +112,7 @@ public struct PythonGrammar: Grammar {
             if segment.tokens.onSameLine.contains("#") {
                 return true
             }
-            
+
             return false
         }
     }
@@ -133,6 +136,24 @@ public struct PythonGrammar: Grammar {
             let withinBraces = segment.isWithinStringLiteral(withStart: "{", end: "}")
             
             return withinString && !withinBraces
+        }
+    }
+    
+    struct MultilineString: SyntaxRule {
+        var tokenType: TokenType { return .string }
+        
+        func matches(_ segment: Segment) -> Bool {
+            if segment.tokens.current.hasPrefix("'''") ||
+                segment.tokens.current.hasPrefix("\"\"\"") {
+                return true
+            }
+            
+            if segment.tokens.count(of: "'''").isOdd ||
+                segment.tokens.count(of: "\"\"\"").isOdd {
+                return true
+            }
+
+            return false
         }
     }
     
